@@ -53,46 +53,40 @@ Click tracking is fully decoupled using **Event-Driven Architecture**:
 
 ## 🧩 Repositories & Services
 
-### [Backend (NestJS)](backend)
+### [Backend (NestJS)](https://github.com/cliplink/api-backend)
 The core API service.
 - **Features:** Link management, Auth (Passport: Local/JWT), Partition Scheduling.
-- **CI/CD:**
-  - 📦 **NPM:** Publishes API contracts for Frontend consumption.
-  - 📦 **Docker:** Builds production images to GHCR.
-  - **Dependency:** Consumes `click-worker` contracts for NATS events.
+- **CI/CD:** Publishes API contracts, builds Docker images.
+- **Dependency:** Consumes `click-worker` contracts for NATS events.
 
-### [Click Worker (NestJS)](click-worker)
+### [Click Worker (NestJS)](https://github.com/cliplink/clicks)
 Background processor.
 - **Features:** NATS Consumer, Batch Database Writer.
-- **CI/CD:**
-  - 📦 **NPM:** Publishes NATS Event contracts (e.g. `ClickCreatedEvent`) for Backend consumption.
-  - 📦 **Docker:** Builds independent deployment artifact.
+- **CI/CD:** Publishes Event contracts, builds Docker images.
 
-### [Frontend (Nuxt.js)](frontend)
+### [Frontend (Nuxt.js)](https://github.com/cliplink/frontend)
 Modern SSR User Interface.
 - **Features:** User dashboard, authentication flows.
 - **Dependency:** Consumes `backend` contracts for 100% type-safe API integration.
-- **CI/CD:** Builds SSR-ready Docker image.
 
-### [Utils](utils)
-Shared library.
-- **Purpose:** Common utilities and helpers shared between Backend and Worker.
-- **CI/CD:** Automatically versioned and published as a private NPM package.
+### [Utils](https://github.com/cliplink/utils)
+Shared library for common utilities and helpers, published as a private NPM package.
 
 ---
 
-## 🚀 DevOps & Development
+## 🚀 DevOps & Deployment
 
-The project includes uniform tooling across all repositories:
+The system is fully containerized and supports various orchestration scenarios:
 
-1.  **Quality Gate:** Strict ESLint and Prettier configurations.
-2.  **Artifact Versioning:** Automated Semantic Versioning for all NPM packages.
-3.  **Deployment:** Docker Compose configurations are provided for:
-    - `dev`: Hot-reload enabled for all services.
-    - `prod`: Restart policies and optimized images.
-    - `test`: Tmpfs volumes for fast, stateless testing.
+1.  **Local Development:** `docker-compose.dev.yml` with hot-reload for all services.
+2.  **Production Readiness:** `docker-compose.prod.yml` is optimized for production workloads and can be used for deployment in a **Docker Swarm** cluster.
+3.  **CI/CD Pipelines:** Every repository has automated workflows for:
+    - Quality Gates (ESLint, Prettier, Tests).
+    - Semantic Versioning for NPM packages.
+    - Containerization (Images pushed to GHCR).
+4.  **Testing Infrastructure:** `docker-compose.test.yml` uses **tmpfs** (in-memory) volumes for lightning-fast, stateless integration testing.
 
 ```bash
-# Example: Start the full stack in production mode
+# Example: Deploying to production / Docker Swarm
 npm run docker:prod
 ```
